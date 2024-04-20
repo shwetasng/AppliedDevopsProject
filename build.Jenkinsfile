@@ -29,5 +29,13 @@ pipeline {
                 }
             }
         }
+
+        stage('Trigger Deploy') {
+            steps {
+                 build job: 'CalOpsDeploy', wait: false, parameters: [
+                 string(name: 'calculator-app', value: "https://hub.docker.com/repository/docker/shwetasng/calculator-app/")
+        ]
+    }
+}
     }
 }
