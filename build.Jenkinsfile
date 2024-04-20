@@ -17,7 +17,7 @@ pipeline {
             }
         
 
-        stage('Push Docker Image to Docker Hub') {
+        stage('Push Docker Image to DOCKER HUB') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'DockerHubCredentials', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
                     script {
