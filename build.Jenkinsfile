@@ -47,7 +47,7 @@ pipeline {
      stage('Scan Docker Image for Vulnerabilities') {
     steps {
         // Use withCredentials to read Snyk API token
-        withCredentials([string(credentialsId: 'snyk-credentials', variable: 'SNYK_TOKEN')]) {
+        withCredentials([string(credentialsId: 'SNYK_CREDENTIALS', variable: 'SNYK_TOKEN')]) {
             // Run Snyk CLI to scan the Docker image
             sh "docker run --rm snyk/snyk-cli test --api-token=${SNYK_TOKEN} ${DOCKER_IMAGE_NAME}"
         }
