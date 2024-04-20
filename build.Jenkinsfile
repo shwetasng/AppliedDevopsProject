@@ -11,11 +11,8 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    dir('/home/pavilion/Desktop/AWS TASKS/AppliedDevopsProject') {
                         // Build Docker image using Dockerfile and current directory 
                         sh "docker build -t ${DOCKER_IMAGE_NAME} -f ${DOCKERFILE_PATH} ."
-                    }
                 }
             }
         }
@@ -34,5 +31,5 @@ pipeline {
         //         }
         //     }
         // }
-    }
+    
 }
