@@ -11,7 +11,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                // Build Docker image using Dockerfile and current directory 
+                // Build Docker image using Dockerfile and current directory ..
                 sh "docker build -t ${DOCKER_IMAGE_NAME} -f ${DOCKERFILE_PATH} ."
             }
         }
