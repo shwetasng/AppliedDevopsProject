@@ -30,12 +30,26 @@ pipeline {
             }
         }
 
-        stage('Trigger Deploy') {
-            steps {
-                 build job: 'CalOpsDeploy', wait: false, parameters: [
-                 string(name: 'calculator-app', value: "https://hub.docker.com/repository/docker/shwetasng/calculator-app/")
-        ]
+        
+
+        stage('Check Image Vulnerability'){
+            steps{
+                script {
+                    // Set Snyk token as environment variable
+                    withCredentials([string(credentialsId: 'SNYK_CREDENTIALS', variable: 'SNYK_TOKEN')]) {
+                        // Perform Snyk container scan
+                        sh "snyk container test shwetasng/calculator-app"
+                    }
+            }
+        }
     }
-}
-    }
+
+
+//     stage('Trigger Deploy') {
+//             steps {
+//                  build job: 'CalOpsDeploy', wait: false, parameters: [
+//                  string(name: 'calculator-app', value: "https://hub.docker.com/repository/docker/shwetasng/calculator-app/")
+//         ]
+//     }
+// }
 }
