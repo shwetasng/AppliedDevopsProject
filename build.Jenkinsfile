@@ -32,17 +32,41 @@ pipeline {
 
         
 
-        stage('Check Image Vulnerability'){
-            steps{
+    //     stage('Check Image Vulnerability'){
+    //         steps{
+    //             script {
+    //                 // Set Snyk token as environment variable
+    //                 withCredentials([string(credentialsId: 'SNYK_CREDENTIALS', variable: 'SNYK_TOKEN')]) {
+    //                     // Perform Snyk container scan
+    //                     sh "snyk container test ${DOCKER_IMAGE_NAME} --api-token=${SNYK_TOKEN}"
+    //                 }
+    //         }
+    //     }
+    // }
+
+
+    stage('Test Container for Vulnerabilities') {
+            steps {
                 script {
                     // Set Snyk token as environment variable
                     withCredentials([string(credentialsId: 'SNYK_CREDENTIALS', variable: 'SNYK_TOKEN')]) {
                         // Perform Snyk container scan
-                        sh "snyk container test ${DOCKER_IMAGE_NAME} --api-token=${SNYK_TOKEN}"
+                        def snykCommand = "snyk container test ${DOCKER_IMAGE_NAME} --file=${DOCKERFILE_PATH}"
+                        def snykOutput = sh(script: snykCommand, returnStdout: true).trim()
+
+                        echo "Snyk scan output:"
+                        echo snykOutput
+
+                        // Optionally fail the build based on Snyk scan results
+                        if (snykOutput.contains('Vulnerabilities found')) {
+                            error "Security vulnerabilities found in the Docker image!"
+                        }
                     }
+                }
             }
         }
-    }
+
+
 
 //      stage('Scan Docker Image for Vulnerabilities') {
 //     steps {
