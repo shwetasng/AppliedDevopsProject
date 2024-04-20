@@ -49,6 +49,7 @@ pipeline {
     stage('Run Snyk Security Test') {
     steps {
         script {
+             withCredentials([string(credentialsId: 'SNYK_CREDENTIALS', variable: 'SNYK_TOKEN')]){
             // Run Snyk security test on the Docker image
             def snykCommand = "snyk test --docker ${DOCKER_IMAGE_NAME}"
             def snykOutput = sh(script: snykCommand, returnStdout: true).trim()
@@ -66,6 +67,7 @@ pipeline {
         }
     }
 }
+    }
 
 
 
