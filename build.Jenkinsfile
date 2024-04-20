@@ -45,26 +45,50 @@ pipeline {
     // }
 
 
-    stage('Test Container for Vulnerabilities') {
-            steps {
-                script {
-                    // Set Snyk token as environment variable
-                    withCredentials([string(credentialsId: 'SNYK_CREDENTIALS', variable: 'SNYK_TOKEN')]) {
-                        // Perform Snyk container scan
-                        def snykCommand = "snyk container test ${DOCKER_IMAGE_NAME} --file=${DOCKERFILE_PATH}"
-                        def snykOutput = sh(script: snykCommand, returnStdout: true).trim()
 
-                        echo "Snyk scan output:"
-                        echo snykOutput
+    stage('Run Snyk Security Test') {
+    steps {
+        script {
+            // Run Snyk security test on the Docker image
+            def snykCommand = "snyk test --docker ${DOCKER_IMAGE_NAME}"
+            def snykOutput = sh(script: snykCommand, returnStdout: true).trim()
 
-                        // Optionally fail the build based on Snyk scan results
-                        if (snykOutput.contains('Vulnerabilities found')) {
-                            error "Security vulnerabilities found in the Docker image!"
-                        }
-                    }
-                }
+            // Print Snyk output to console
+            echo "Snyk Security Test Output:"
+            echo "${snykOutput}"
+
+            // Check Snyk output for vulnerabilities
+            if (snykOutput.contains('found 0 issues')) {
+                echo "No vulnerabilities found in the Docker image."
+            } else {
+                error "Vulnerabilities found in the Docker image. Aborting further steps."
             }
         }
+    }
+}
+
+
+
+    // stage('Test Container for Vulnerabilities') {
+    //         steps {
+    //             script {
+    //                 // Set Snyk token as environment variable
+    //                 withCredentials([string(credentialsId: 'SNYK_CREDENTIALS', variable: 'SNYK_TOKEN')]) {
+    //                     // Perform Snyk container scan
+    //                     def snykCommand = "snyk container test ${DOCKER_IMAGE_NAME} --file=${DOCKERFILE_PATH}"
+    //                     def snykOutput = sh(script: snykCommand, returnStdout: true).trim()
+
+    //                     echo "Snyk scan output:"
+    //                     echo snykOutput
+
+    //                     // Optionally fail the build based on Snyk scan results
+    //                     if (snykOutput.contains('Vulnerabilities found')) {
+    //                         error "Security vulnerabilities found in the Docker image!"
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
 
 
 
